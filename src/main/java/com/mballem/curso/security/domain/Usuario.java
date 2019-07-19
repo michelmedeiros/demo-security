@@ -18,8 +18,8 @@ public class Usuario extends AbstractEntity {
 	@JsonIgnore
 	@Column(name = "senha", nullable = false)
 	private String senha;
-
-	@ManyToMany(fetch = FetchType.EAGER)
+	
+	@ManyToMany
 	@JoinTable(
 		name = "usuarios_tem_perfis", 
         joinColumns = { @JoinColumn(name = "usuario_id", referencedColumnName = "id") }, 
