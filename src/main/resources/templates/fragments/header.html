@@ -6,7 +6,6 @@
 <body>
 	<header th:fragment="cabecalho">
 		<h1>Current URl</h1>
-		<h4 th:text="${#httpServletRequest.requestURI}" class="alert-heading">URL</h4>
 		<nav class="navbar navbar-expand-md navbar-dark fixed-top bg-dark">
 			<a class="navbar-brand" th:href="@{/}">Clínica Spring Security</a>
 			<button class="navbar-toggler" type="button" data-toggle="collapse"
@@ -52,7 +51,7 @@
 				<form class="form-inline mt-2 mt-md-0" sec:authorize="!isAuthenticated()">
 					<div class="form-check mb-2 mr-sm-2">
 						<a class="btn btn-outline-success my-2 my-sm-0" role="button"
-							th:href="@{/login}">Login</a>
+							th:href="@{/login-page}">Login</a>
 					</div>
 
 					<div class="form-check mb-2 mr-sm-2">
