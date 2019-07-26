@@ -2,9 +2,11 @@ package com.mballem.curso.security.service;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import javax.servlet.http.HttpServletRequest;
 
+import com.mballem.curso.security.domain.PerfilTipo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.security.core.authority.AuthorityUtils;
@@ -38,11 +40,12 @@ public class UsuarioService implements UserDetailsService {
 
 	@Override @Transactional(readOnly = true)
 	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-		Usuario usuario = buscarPorEmail(username);
+		Usuario usuario = buscarPorEmailEAtivo(username)
+				.orElseThrow(() -> new UsernameNotFoundException("Usuario " + username + " não encontrado."));
 		return new User(
-			usuario.getEmail(),
-			usuario.getSenha(),
-			AuthorityUtils.createAuthorityList(getAtuthorities(usuario.getPerfis()))
+				usuario.getEmail(),
+				usuario.getSenha(),
+				AuthorityUtils.createAuthorityList(getAtuthorities(usuario.getPerfis()))
 		);
 	}
 	
@@ -94,5 +97,19 @@ public class UsuarioService implements UserDetailsService {
 	public void alterarSenha(Usuario usuario, String senha) {
 		usuario.setSenha(new BCryptPasswordEncoder().encode(senha));
 		repository.save(usuario);		
+	}
+
+	@Transactional(readOnly = false)
+	public void salvarCadastroPaciente(Usuario usuario) {
+		String cript = new BCryptPasswordEncoder().encode(usuario.getSenha());
+		usuario.setSenha(cript);
+		usuario.setAtivo(false);
+		usuario.addPerfil(PerfilTipo.PACIENTE);
+		repository.save(usuario);
+	}
+
+	@Transactional(readOnly = true)
+	public Optional<Usuario> buscarPorEmailEAtivo(String email) {
+		return repository.findByEmailAndAtivo(email);
 	}
 }
